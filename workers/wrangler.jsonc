@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ministry-calendar-cron",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-01",
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "//": "Every 15 minutes. Adjust the cron expression to taste.",
+    "crons": [
+      "*/15 * * * *"
+    ]
+  },
+  "vars": {
+    "//": "Set SITE_URL to your deployed site origin. CRON_SYNC_SECRET is a SECRET — set it with `wrangler secret put CRON_SYNC_SECRET`, not here.",
+    "SITE_URL": "https://fishermansfellowship.com"
+  }
+}

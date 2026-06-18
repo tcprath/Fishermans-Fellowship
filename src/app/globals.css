@@ -1,26 +1,179 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+/* Ephemera Sickles Block — commercial license required for production domain */
+@font-face {
+  font-family: "Ephemera Sickles Block";
+  src: url("/fonts/EphemeraSickles-Block.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* shadcn semantic tokens → brand */
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:          var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
+  --color-sidebar-ring:       var(--sidebar-ring);
+  --color-sidebar-border:     var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent:     var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary:    var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar:            var(--sidebar);
+
+  /* Brand palette — use as bg-ff-blue, text-ff-gold, etc. */
+  --color-ff-blue:    #243746;
+  --color-ff-cream:   #F4EDE5;
+  --color-ff-gold:    #BD9A5F;
+  --color-paper:      #FBF8F2;
+  --color-cream-200:  #ECE2D4;
+  --color-cream-300:  #E0D3C0;
+  --color-blue-900:   #1B2A36;
+  --color-blue-700:   #33485A;
+  --color-blue-500:   #5A6E7E;
+  --color-blue-300:   #9FAEBA;
+  --color-gold-700:   #A8854B;
+  --color-gold-300:   #D8C39C;
+  --color-ink:        #243746;
+  --color-ink-soft:   #3E4E5A;
+  --color-muted-text: #6E7882;
+
+  /* Typography */
+  --font-sans:    var(--font-sans);
+  --font-mono:    ui-monospace, monospace;
+  --font-heading: var(--font-heading);
+  --font-display: var(--font-heading);
+  --font-serif:   var(--font-serif);
+
+  /* Radii */
+  --radius-sm:    calc(var(--radius) * 0.6);
+  --radius-md:    calc(var(--radius) * 0.8);
+  --radius-lg:    var(--radius);
+  --radius-xl:    calc(var(--radius) * 1.4);
+  --radius-2xl:   calc(var(--radius) * 1.8);
+  --radius-3xl:   calc(var(--radius) * 2.2);
+  --radius-4xl:   calc(var(--radius) * 2.6);
+  --radius-pill:  999px;
+  --radius-card:  20px;
+  --radius-input: 11px;
+  --radius-frame: 2px;
+
+  /* Layout & motion */
+  --max-w-content:           1140px;
+  --ease-brand:              cubic-bezier(.32,.72,0,1);
+  --letter-spacing-eyebrow:  0.24em;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* ── shadcn semantic vars → brand palette ── */
+  --background:         #FBF8F2;
+  --foreground:         #243746;
+  --card:               #ffffff;
+  --card-foreground:    #243746;
+  --popover:            #ffffff;
+  --popover-foreground: #243746;
+  --primary:            #243746;
+  --primary-foreground: #F4EDE5;
+  --secondary:          #ECE2D4;
+  --secondary-foreground: #243746;
+  --muted:              #ECE2D4;
+  --muted-foreground:   #6E7882;
+  --accent:             #BD9A5F;
+  --accent-foreground:  #243746;
+  --destructive:        oklch(0.577 0.245 27.325);
+  --border:             rgba(36,55,70,.14);
+  --input:              rgba(36,55,70,.14);
+  --ring:               #BD9A5F;
+  --radius:             0.6875rem; /* 11px */
+  --sidebar:            #F4EDE5;
+  --sidebar-foreground: #243746;
+  --sidebar-primary:    #243746;
+  --sidebar-primary-foreground: #F4EDE5;
+  --sidebar-accent:     #ECE2D4;
+  --sidebar-accent-foreground: #243746;
+  --sidebar-border:     rgba(36,55,70,.14);
+  --sidebar-ring:       #BD9A5F;
+
+  /* ── Brand raw tokens (for inline SVG recoloring, etc.) ── */
+  --ff-blue:    #243746;
+  --ff-cream:   #F4EDE5;
+  --ff-gold:    #BD9A5F;
+  --ff-accent:  #BD9A5F;
+
+  /* ── Display face (Ephemera — self-hosted; sans/serif set by next/font on <html>) ── */
+  --font-heading: "Ephemera Sickles Block", "Fraunces", Georgia, serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  html {
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: var(--ff-blue);
+    font-weight: 600;
+    line-height: 1.05;
+  }
+  /* Gold focus ring on inputs */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    border-color: var(--ff-gold);
+    background: #fff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Film grain overlay — analog texture over blue surfaces */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: .035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  body::after {
+    display: none;
+  }
 }

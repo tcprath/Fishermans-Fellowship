@@ -1,0 +1,29 @@
+# .dev.vars.example
+# Copy to `.dev.vars` (gitignored) so `npm run preview` (the Workers runtime) has values locally.
+# For plain `next dev`, also copy the NEXT_PUBLIC_* lines into `.env.local`.
+# NEVER commit real values. The secrets below must match what you set in production via
+# `wrangler secret put <NAME>`.
+
+# ---- Public (safe to expose; mirror NEXT_PUBLIC_* into .env.local for `next dev`) ----
+NEXT_PUBLIC_SITE_URL="https://www.ministrydomain.org"
+NEXT_PUBLIC_SITE_NAME="Ministry Name"
+NEXT_PUBLIC_SITE_TZ="America/New_York"
+NEXT_PUBLIC_SUPABASE_URL="https://xxxxxxxxxxxx.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
+
+# ---- Server secrets (production: set with `wrangler secret put <NAME>`) ----
+SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
+
+GOOGLE_CALENDAR_ID="xxxxxxxx@group.calendar.google.com"
+GOOGLE_SERVICE_ACCOUNT_EMAIL="svc-name@your-project.iam.gserviceaccount.com"
+# Paste the private_key from the service-account JSON exactly, keeping the literal \n sequences.
+# jose imports it with importPKCS8(). Wrap in double quotes.
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvg...\n...\n-----END PRIVATE KEY-----\n"
+
+# Shared bearer that protects POST /api/cron/calendar-sync. Use a long random string.
+# The calendar-cron worker must be given the SAME value.
+CRON_SYNC_SECRET="generate-a-long-random-string"
+
+# ---- Optional email ----
+RESEND_API_KEY=""
+CONTACT_NOTIFY_EMAIL="ministry@example.org"
