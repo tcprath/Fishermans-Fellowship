@@ -122,6 +122,25 @@
   --ff-gold:    #BD9A5F;
   --ff-accent:  #BD9A5F;
 
+  /* ── Web extension tokens — available as CSS vars globally ── */
+  --paper:      #FBF8F2;
+  --cream-200:  #ECE2D4;
+  --cream-300:  #E0D3C0;
+  --blue-900:   #1B2A36;
+  --blue-700:   #33485A;
+  --blue-500:   #5A6E7E;
+  --blue-300:   #9FAEBA;
+  --gold-700:   #A8854B;
+  --gold-300:   #D8C39C;
+  --ink:        #243746;
+  --ink-soft:   #3E4E5A;
+  --muted-text: #6E7882;
+  --line:       rgba(36,55,70,.14);
+  --line-soft:  rgba(36,55,70,.08);
+
+  /* ── Layout ── */
+  --max-w-content: 1140px;
+
   /* ── Display face (Ephemera — self-hosted; sans/serif set by next/font on <html>) ── */
   --font-heading: "Ephemera Sickles Block", "Fraunces", Georgia, serif;
 }
@@ -146,6 +165,9 @@
     font-weight: 600;
     line-height: 1.05;
   }
+  h1 {
+    line-height: 0.97;
+  }
   /* Gold focus ring on inputs */
   input:focus-visible,
   textarea:focus-visible,
@@ -168,6 +190,213 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ── Scroll reveal — progressive enhancement ─────────────────────────────
+   Elements are VISIBLE by default. Only after JS adds .js-reveal to <html>
+   do they become hidden, then revealed by IntersectionObserver.
+   Crawlers, no-JS, and SSR all see content normally.
+───────────────────────────────────────────────────────────────────────── */
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.75s cubic-bezier(.32,.72,0,1), transform 0.75s cubic-bezier(.32,.72,0,1);
+}
+html.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+html.js-reveal [data-reveal][data-delay="100"] { transition-delay: 100ms; }
+html.js-reveal [data-reveal][data-delay="150"] { transition-delay: 150ms; }
+html.js-reveal [data-reveal][data-delay="200"] { transition-delay: 200ms; }
+html.js-reveal [data-reveal][data-delay="300"] { transition-delay: 300ms; }
+html.js-reveal [data-reveal][data-delay="400"] { transition-delay: 400ms; }
+html.js-reveal [data-reveal][data-delay="500"] { transition-delay: 500ms; }
+
+/* ── Shadow tokens ───────────────────────────────────────────────────────── */
+.shadow-card {
+  box-shadow: 0 1px 3px rgba(36,55,70,.06), 0 1px 2px rgba(36,55,70,.04);
+}
+.shadow-card-hover {
+  box-shadow: 0 8px 24px rgba(36,55,70,.10), 0 2px 8px rgba(36,55,70,.06);
+}
+
+/* ── Brand button base ───────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 999px;
+  padding: 13px 14px 13px 24px;
+  transition: background 0.3s cubic-bezier(.32,.72,0,1),
+              color 0.3s cubic-bezier(.32,.72,0,1),
+              transform 0.3s cubic-bezier(.32,.72,0,1),
+              box-shadow 0.3s cubic-bezier(.32,.72,0,1);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.975); }
+
+.btn-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+}
+.btn:hover .btn-chip {
+  transform: translate(2px, -1px);
+}
+
+.btn-primary {
+  background: var(--ff-blue);
+  color: var(--ff-cream);
+}
+.btn-primary:hover { background: var(--blue-900, #1B2A36); }
+.btn-primary .btn-chip {
+  background: rgba(244,237,229,.14);
+  color: var(--ff-gold);
+}
+
+.btn-gold {
+  background: var(--ff-gold);
+  color: var(--ff-blue);
+}
+.btn-gold:hover { background: var(--gold-700, #A8854B); }
+.btn-gold .btn-chip {
+  background: rgba(36,55,70,.16);
+  color: var(--ff-blue);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--line, rgba(36,55,70,.14));
+  color: var(--ink, #243746);
+  padding: 11px 22px;
+  gap: 8px;
+}
+.btn-ghost:hover {
+  border-color: var(--ff-blue);
+  background: rgba(36,55,70,.04);
+}
+
+.btn-ghost-light {
+  background: transparent;
+  border: 1.5px solid rgba(244,237,229,.35);
+  color: var(--ff-cream);
+  padding: 11px 22px;
+  gap: 8px;
+}
+.btn-ghost-light:hover {
+  border-color: rgba(244,237,229,.65);
+  background: rgba(244,237,229,.08);
+}
+
+/* ── Nav scroll elevation ────────────────────────────────────────────────── */
+.header-scrolled {
+  box-shadow: 0 1px 0 var(--line, rgba(36,55,70,.14)),
+              0 4px 16px rgba(36,55,70,.06);
+}
+
+/* ── FullCalendar brand overrides ────────────────────────────────────────── */
+.fc {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--ink, #243746);
+}
+.fc .fc-toolbar-title {
+  font-family: var(--font-heading);
+  font-size: clamp(18px, 2vw, 24px);
+  color: var(--ink, #243746);
+  letter-spacing: -0.01em;
+}
+.fc .fc-button {
+  background: var(--ff-blue) !important;
+  border-color: var(--ff-blue) !important;
+  border-radius: 999px !important;
+  font-family: var(--font-sans), system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 6px 16px !important;
+  transition: background 0.2s !important;
+}
+.fc .fc-button:hover {
+  background: var(--blue-900, #1B2A36) !important;
+  border-color: var(--blue-900, #1B2A36) !important;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background: var(--blue-900, #1B2A36) !important;
+  border-color: var(--blue-900, #1B2A36) !important;
+}
+.fc .fc-col-header-cell-cushion {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted, #6E7882);
+  padding: 10px 4px;
+}
+.fc .fc-daygrid-day-number {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft, #3E4E5A);
+  padding: 8px;
+}
+.fc .fc-day-today {
+  background: rgba(189,154,95,.08) !important;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  background: var(--ff-gold);
+  color: var(--ff-blue);
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.fc .fc-event {
+  background: var(--ff-blue) !important;
+  border-color: var(--ff-blue) !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 2px 6px !important;
+  cursor: pointer;
+}
+.fc .fc-event:hover {
+  background: var(--blue-700, #33485A) !important;
+}
+.fc td, .fc th {
+  border-color: var(--line, rgba(36,55,70,.1)) !important;
+}
+.fc .fc-scrollgrid {
+  border-color: var(--line, rgba(36,55,70,.1)) !important;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.fc .fc-list-event:hover td {
+  background: rgba(36,55,70,.04) !important;
+}
+.fc .fc-list-day-cushion {
+  background: var(--cream-200, #ECE2D4) !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted, #6E7882);
+}
+.fc .fc-list-event-dot {
+  border-color: var(--ff-gold) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -175,5 +404,10 @@ body::after {
   }
   body::after {
     display: none;
+  }
+  html.js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

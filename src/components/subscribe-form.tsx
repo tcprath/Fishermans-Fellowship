@@ -5,14 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const schema = z.object({ email: z.string().email("Valid email required") });
 type FormData = z.infer<typeof schema>;
 
-type Props = { compact?: boolean };
+type Props = { compact?: boolean; dark?: boolean };
 
-export default function SubscribeForm({ compact }: Props) {
+export default function SubscribeForm({ compact, dark }: Props) {
   const {
     register,
     handleSubmit,
@@ -36,19 +35,17 @@ export default function SubscribeForm({ compact }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={compact ? "space-y-2" : "space-y-3"}>
-      {!compact && (
-        <Label htmlFor="sub-email" className="text-xs font-semibold uppercase tracking-eyebrow text-[var(--muted)]">
-          Email address
-        </Label>
-      )}
       <Input
         id="sub-email"
         type="email"
-        placeholder="you@example.com"
+        placeholder="Email Address"
         autoComplete="email"
         aria-invalid={!!errors.email}
         {...register("email")}
-        className="rounded-input border-[var(--line)] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0"
+        className={dark
+          ? "rounded-[11px] border-[rgba(255,255,255,0.25)] bg-[rgba(255,255,255,0.15)] text-white placeholder:text-[rgba(255,255,255,0.5)] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
+          : "rounded-[11px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
+        }
       />
       {errors.email && (
         <p className="text-xs text-destructive">{errors.email.message}</p>
@@ -58,7 +55,7 @@ export default function SubscribeForm({ compact }: Props) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full py-2.5 px-6 rounded-full bg-[var(--ff-gold)] text-[var(--ff-blue)] font-semibold text-sm hover:bg-[var(--gold-700)] disabled:opacity-60 transition-colors"
+        className="w-full py-3 px-6 rounded-full bg-[var(--ff-gold)] text-[var(--ff-blue)] font-bold text-[15px] hover:bg-[#A8854B] disabled:opacity-60 transition-colors duration-200 active:scale-[0.975]"
       >
         {isSubmitting ? "Signing up…" : "Get the Daily Devotional"}
       </button>

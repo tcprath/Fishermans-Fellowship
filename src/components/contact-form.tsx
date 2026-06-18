@@ -6,7 +6,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 
 const schema = z.object({
   name:    z.string().min(1, "Name required"),
@@ -39,39 +38,33 @@ export default function ContactForm() {
   }
 
   const fieldClass =
-    "rounded-input border-[var(--line)] bg-[var(--paper)] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0";
-  const labelClass =
-    "text-xs font-semibold uppercase tracking-eyebrow text-[var(--muted)]";
+    "rounded-[11px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors placeholder:text-[#9FAEBA]";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="grid sm:grid-cols-2 gap-5">
-        <div className="space-y-1.5">
-          <Label htmlFor="cf-name" className={labelClass}>Name</Label>
-          <Input id="cf-name" autoComplete="name" {...register("name")} className={fieldClass} />
-          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+        <div>
+          <Input id="cf-name" autoComplete="name" placeholder="Your name" {...register("name")} className={fieldClass} />
+          {errors.name && <p className="text-xs text-destructive mt-1">{errors.name.message}</p>}
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="cf-email" className={labelClass}>Email</Label>
-          <Input id="cf-email" type="email" autoComplete="email" {...register("email")} className={fieldClass} />
-          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+        <div>
+          <Input id="cf-email" type="email" autoComplete="email" placeholder="Email address" {...register("email")} className={fieldClass} />
+          {errors.email && <p className="text-xs text-destructive mt-1">{errors.email.message}</p>}
         </div>
       </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="cf-subject" className={labelClass}>Subject (optional)</Label>
-        <Input id="cf-subject" {...register("subject")} className={fieldClass} />
+      <div>
+        <Input id="cf-subject" placeholder="Subject (optional)" {...register("subject")} className={fieldClass} />
       </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="cf-message" className={labelClass}>Message</Label>
-        <Textarea id="cf-message" rows={6} {...register("message")} className={fieldClass} />
-        {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
+      <div>
+        <Textarea id="cf-message" rows={6} placeholder="Prayer requests, Questions, or Comments" {...register("message")} className={fieldClass} />
+        {errors.message && <p className="text-xs text-destructive mt-1">{errors.message.message}</p>}
       </div>
       {/* Honeypot */}
       <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
       <button
         type="submit"
         disabled={isSubmitting}
-        className="px-8 py-3 rounded-full bg-[var(--ff-blue)] text-[var(--ff-cream)] font-semibold text-sm hover:bg-[var(--blue-900)] disabled:opacity-60 transition-colors"
+        className="btn btn-primary disabled:opacity-60"
       >
         {isSubmitting ? "Sending…" : "Send a message"}
       </button>

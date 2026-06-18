@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { getBlogBySlug, getPostBySlug } from "@/lib/content";
 
 export const revalidate = 60;
@@ -49,9 +50,9 @@ export default async function PostPage({
 
   return (
     <article>
-      {/* Hero image */}
+      {/* ── Hero image ────────────────────────────────────────────────────── */}
       {post.hero_image_url && (
-        <div className="relative h-72 sm:h-96 overflow-hidden">
+        <div className="relative h-72 sm:h-[420px] overflow-hidden">
           <Image
             src={post.hero_image_url}
             alt={post.title}
@@ -63,38 +64,47 @@ export default async function PostPage({
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, rgba(27,42,54,.3) 0%, rgba(27,42,54,.7) 100%)",
+                "linear-gradient(180deg, rgba(27,42,54,.2) 0%, rgba(27,42,54,.65) 100%)",
             }}
           />
         </div>
       )}
 
-      {/* Content */}
+      {/* ── Content ───────────────────────────────────────────────────────── */}
       <div className="max-w-2xl mx-auto px-5 py-16">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
-          <Link href={`/${blogSlug}`} className="hover:text-[var(--ff-blue)] transition-colors">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 text-xs text-[var(--muted-text,#6E7882)] mb-10"
+        >
+          <Link
+            href={`/${blogSlug}`}
+            className="hover:text-[var(--ff-blue)] transition-colors duration-200 font-medium"
+          >
             {blog.name}
           </Link>
-          <span>/</span>
-          <span className="text-[var(--ink-soft)]">{post.title}</span>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+          <span className="text-[var(--ink-soft,#3E4E5A)] truncate max-w-[240px]">
+            {post.title}
+          </span>
         </nav>
 
         {/* Meta */}
-        <div className="mb-8">
+        <div className="mb-10">
           {date && (
-            <p className="text-xs font-semibold uppercase tracking-eyebrow text-[var(--muted)] mb-3">
-              {date}{post.author ? ` · By ${post.author}` : ""}
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--muted-text,#6E7882)] mb-4">
+              {date}
+              {post.author ? ` · By ${post.author}` : ""}
             </p>
           )}
           <h1
             className="font-display text-[var(--ink)] leading-tight"
-            style={{ fontSize: "clamp(30px, 4.5vw, 48px)" }}
+            style={{ fontSize: "clamp(30px, 4.5vw, 50px)" }}
           >
             {post.title}
           </h1>
           {post.excerpt && (
-            <p className="font-serif italic text-[var(--muted)] text-lg mt-4 leading-relaxed">
+            <p className="font-serif italic text-[var(--muted-text,#6E7882)] text-lg mt-5 leading-relaxed border-l-2 border-[var(--ff-gold)] pl-5">
               {post.excerpt}
             </p>
           )}
@@ -103,12 +113,23 @@ export default async function PostPage({
         {/* Body */}
         {post.body_html ? (
           <div
-            className="prose prose-lg prose-headings:font-display prose-headings:text-[var(--ink)] prose-a:text-[var(--ff-blue)] prose-blockquote:border-l-[var(--ff-gold)] max-w-none"
+            className="prose prose-lg max-w-none prose-headings:font-display prose-headings:text-[var(--ink)] prose-headings:leading-tight prose-a:text-[var(--ff-blue)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--ff-gold)] prose-blockquote:not-italic prose-blockquote:font-display prose-blockquote:text-[var(--ink)] prose-img:rounded-[16px]"
             dangerouslySetInnerHTML={{ __html: post.body_html }}
           />
         ) : (
-          <p className="text-[var(--muted)]">No content yet.</p>
+          <p className="text-[var(--muted-text,#6E7882)]">No content yet.</p>
         )}
+
+        {/* Back */}
+        <div className="mt-16 pt-8 border-t border-[var(--line)]">
+          <Link
+            href={`/${blogSlug}`}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ff-blue)] hover:text-[var(--blue-700,#33485A)] transition-colors duration-200 group"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" />
+            Back to {blog.name}
+          </Link>
+        </div>
       </div>
     </article>
   );
