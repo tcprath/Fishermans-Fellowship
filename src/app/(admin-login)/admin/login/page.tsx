@@ -40,10 +40,7 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-foreground mb-1.5"
-        >
+        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1.5">
           Email
         </label>
         <Input
@@ -57,10 +54,7 @@ function LoginForm() {
         />
       </div>
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-foreground mb-1.5"
-        >
+        <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1.5">
           Password
         </label>
         <Input
@@ -96,9 +90,7 @@ export default function LoginPage() {
             <Fish className="size-7 text-[#BD9A5F]" />
           </div>
           <h1 className="text-xl font-semibold text-[#243746]">Ministry Admin</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sign in to manage content
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Sign in to manage content</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-border p-6">
