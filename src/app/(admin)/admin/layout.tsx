@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import { Toaster } from "@/components/ui/sonner";
@@ -18,9 +19,11 @@ export default async function AdminLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Middleware handles unauthenticated redirects; user should always be present here.
-  // Fall back gracefully if somehow reached without a session.
-  const email = user?.email ?? "";
+  // Login page lives in (admin-login) route group — NOT wrapped by this layout.
+  // So this redirect is safe: it only fires for /admin/* pages (dashboard, posts, etc.).
+  if (!user) redirect("/admin/login");
+
+  const email = user.email ?? "";
 
   return (
     <div className="min-h-screen flex bg-slate-50">
