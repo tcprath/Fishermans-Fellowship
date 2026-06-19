@@ -69,3 +69,43 @@ export type SubscriberRow = {
   source: string | null;
   created_at: string;
 };
+
+export type TagRow = {
+  id: string;
+  slug: string;
+  name: string;
+  created_at: string;
+};
+
+export type PostWithTags = PostRow & { tags: TagRow[] };
+export type DevotionalWithTags = DevotionalRow & { tags: TagRow[] };
+
+export type ResourceType =
+  | "post"
+  | "book"
+  | "video"
+  | "podcast"
+  | "study"
+  | "article"
+  | "link";
+
+export type ResourceRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  body_html: string | null;
+  type: ResourceType;
+  url: string | null;
+  image_url: string | null;
+  author: string | null;
+  scripture: string | null;
+  featured: boolean;
+  status: "draft" | "published";
+  published_at: string | null;
+  publish_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ResourceWithTags = ResourceRow & { tags: TagRow[] };

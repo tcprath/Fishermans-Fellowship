@@ -1,26 +1,24 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getPublishedDevotionalStubs, getDevotionalBySlug } from "@/lib/content";
+import {
+  getPublishedDevotionalStubs,
+  getDevotionalBySlug,
+  getRecentDevotionals,
+} from "@/lib/content";
 import { pickOfTheDay } from "@/lib/devotional-of-the-day";
 import ShareButtons from "@/components/share-buttons";
 import { Sparkle } from "@/components/ui/sparkle";
-
-const DEFAULT_IMAGE = "/devotional-default.jpg";
 
 export default async function DevotionalOfTheDay() {
   const stubs = await getPublishedDevotionalStubs();
   const stub = pickOfTheDay(stubs);
 
-  if (!stub) {
-    return (
-      <div className="rounded-card bg-(--cream-200) p-10 text-center text-(--muted-text,#6E7882) text-sm">
-        No devotionals published yet — check back soon.
-      </div>
-    );
+  // Calendar-dated pick first; otherwise fall back to most recent published
+  let devotional = stub ? await getDevotionalBySlug(stub.slug) : null;
+  if (!devotional) {
+    const [recent] = await getRecentDevotionals(1);
+    devotional = recent ?? null;
   }
-
-  const devotional = await getDevotionalBySlug(stub.slug);
 
   if (!devotional) {
     return (
@@ -31,59 +29,65 @@ export default async function DevotionalOfTheDay() {
   }
 
   const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/devotionals/${devotional.slug}`;
-  const imageSrc = devotional.image_url || DEFAULT_IMAGE;
 
   return (
-    <div className="rounded-card overflow-hidden bg-(--ff-blue) text-(--ff-cream) grid md:grid-cols-2 shadow-card-hover">
-      {/* Image */}
-      <div className="relative aspect-4/3 md:aspect-auto min-h-64">
-        <Image
-          src={imageSrc}
-          alt={devotional.title}
-          fill
-          className="object-cover"
-          sizes="(max-width:768px) 100vw, 50vw"
-          priority
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(160deg, rgba(27,42,54,.2) 0%, rgba(27,42,54,.6) 100%)",
-          }}
-        />
-      </div>
+    <div
+      className="relative overflow-hidden rounded-card text-(--ff-cream) shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)] ring-1 ring-[rgba(189,154,95,0.18)]"
+      style={{
+        background:
+          "linear-gradient(135deg, #15242F 0%, #11202C 45%, #0D1A24 100%)",
+      }}
+    >
+      {/* Bottom gold accent strip */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[2px]"
+        style={{ background: "linear-gradient(to right, transparent, var(--ff-gold), transparent)" }}
+        aria-hidden
+      />
 
-      {/* Content */}
-      <div className="flex flex-col p-8 md:p-12 justify-center gap-4">
-        <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-(--ff-gold)">
-          <Sparkle size={10} className="text-(--ff-gold)" />
-          Devotional of the Day
-        </p>
-        {devotional.scripture && (
-          <p className="font-serif italic text-(--gold-300,#D8C39C) text-sm leading-relaxed">
-            {devotional.scripture}
-          </p>
-        )}
-        <h3
-          className="font-display text-(--ff-cream) leading-tight"
-          style={{ fontSize: "clamp(22px,3vw,30px)" }}
-        >
-          {devotional.title}
-        </h3>
-        {devotional.excerpt && (
-          <p className="text-(--blue-300,#9FAEBA) text-sm leading-relaxed line-clamp-4">
-            {devotional.excerpt}
-          </p>
-        )}
-        <div className="flex flex-col sm:flex-row gap-3 mt-2">
-          <Link href={`/devotionals/${devotional.slug}`} className="btn btn-gold">
-            Read today&apos;s word
-            <span className="btn-chip">
-              <ArrowRight className="h-4 w-4" />
+      <div className="relative p-6 md:p-8">
+        <div className="grid md:grid-cols-[1fr_auto] gap-5 md:gap-10 items-center">
+          {/* Left: content */}
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full border border-[rgba(189,154,95,0.4)] bg-[rgba(189,154,95,0.06)] text-[10px] font-bold uppercase tracking-[0.24em] text-(--ff-gold)">
+              <Sparkle size={9} className="text-(--ff-gold)" />
+              Devotional of the Day
             </span>
-          </Link>
-          <div className="flex items-center">
-            <ShareButtons url={url} title={devotional.title} />
+
+            {devotional.scripture && (
+              <div className="flex items-start gap-3 mb-4">
+                <span className="block w-[3px] self-stretch rounded-full bg-(--ff-gold)" aria-hidden />
+                <p className="font-serif italic text-(--ff-gold) text-[15px] md:text-base leading-snug tracking-wide">
+                  {devotional.scripture}
+                </p>
+              </div>
+            )}
+
+            <h3
+              className="font-display text-(--ff-cream) leading-[1.1] mb-2.5"
+              style={{ fontSize: "clamp(20px, 2.2vw, 26px)" }}
+            >
+              {devotional.title}
+            </h3>
+
+            {devotional.excerpt && (
+              <p className="font-serif italic text-[var(--blue-300,#9FAEBA)] text-[15px] leading-relaxed line-clamp-3 max-w-xl">
+                &ldquo;{devotional.excerpt}&rdquo;
+              </p>
+            )}
+          </div>
+
+          {/* Right: CTA + share */}
+          <div className="flex flex-col items-stretch md:items-end gap-3 shrink-0">
+            <Link href={`/devotionals/${devotional.slug}`} className="btn btn-gold whitespace-nowrap">
+              Read today&apos;s word
+              <span className="btn-chip">
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+            <div className="flex items-center justify-end">
+              <ShareButtons url={url} title={devotional.title} />
+            </div>
           </div>
         </div>
       </div>

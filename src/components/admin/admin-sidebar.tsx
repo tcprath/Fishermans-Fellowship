@@ -9,6 +9,7 @@ import {
   FileText,
   BookOpen,
   Calendar,
+  Library,
   LogOut,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/admin/posts", label: "Posts", icon: FileText, exact: false },
   { href: "/admin/devotionals", label: "Devotionals", icon: BookOpen, exact: false },
   { href: "/admin/events", label: "Events", icon: Calendar, exact: false },
+  { href: "/admin/resources", label: "Resources", icon: Library, exact: false },
 ];
 
 export default function AdminSidebar({ email }: { email: string }) {

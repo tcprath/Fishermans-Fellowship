@@ -86,16 +86,18 @@ export default function ContactPage() {
       <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-20 grid md:grid-cols-[1fr_1fr] gap-16">
         {/* Form */}
         <div>
-          <h2
-            className="font-display text-[var(--ink)] mb-2"
-            style={{ fontSize: "clamp(22px,3vw,30px)" }}
-          >
-            Send a message
-          </h2>
-          <p className="text-[var(--ink-soft,#3E4E5A)] mb-8 leading-relaxed">
-            We&apos;ll get back to you as soon as we can — typically within a day or two.
-          </p>
-          <ContactForm />
+          <div className="rounded-[20px] bg-white border border-[var(--line)] shadow-card p-7 md:p-9">
+            <h2
+              className="font-display text-[var(--ink)] mb-2"
+              style={{ fontSize: "clamp(22px,3vw,30px)" }}
+            >
+              Send a message
+            </h2>
+            <p className="text-[var(--ink-soft,#3E4E5A)] mb-7 leading-relaxed">
+              We&apos;ll get back to you as soon as we can — typically within a day or two.
+            </p>
+            <ContactForm />
+          </div>
 
           {/* Social links */}
           <div className="mt-8 rounded-[20px] bg-[var(--ff-blue)] p-7 text-[var(--ff-cream)]">

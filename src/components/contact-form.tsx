@@ -38,7 +38,7 @@ export default function ContactForm() {
   }
 
   const fieldClass =
-    "rounded-[11px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors placeholder:text-[#9FAEBA]";
+    "h-12 rounded-[12px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors placeholder:text-[#9FAEBA] text-[15px] px-4";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -56,7 +56,7 @@ export default function ContactForm() {
         <Input id="cf-subject" placeholder="Subject (optional)" {...register("subject")} className={fieldClass} />
       </div>
       <div>
-        <Textarea id="cf-message" rows={6} placeholder="Prayer requests, Questions, or Comments" {...register("message")} className={fieldClass} />
+        <Textarea id="cf-message" rows={7} placeholder="Prayer requests, Questions, or Comments" {...register("message")} className="rounded-[12px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors placeholder:text-[#9FAEBA] text-[15px] px-4 py-3" />
         {errors.message && <p className="text-xs text-destructive mt-1">{errors.message.message}</p>}
       </div>
       {/* Honeypot */}

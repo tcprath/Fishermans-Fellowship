@@ -17,8 +17,9 @@ import {
 import RichEditor from "@/components/admin/rich-editor";
 import ImageUpload from "@/components/admin/image-upload";
 import BiblePicker from "@/components/admin/bible-picker";
+import TagPicker from "@/components/admin/tag-picker";
 import { upsertDevotional, deleteDevotional } from "@/app/(admin)/admin/devotionals/actions";
-import type { DevotionalRow } from "@/lib/supabase/types";
+import type { DevotionalRow, TagRow } from "@/lib/supabase/types";
 import { ExternalLink, Trash2, BookOpen, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
@@ -26,6 +27,8 @@ interface DevotionalFormProps {
   devotional?: DevotionalRow;
   initialCalMonth?: number;
   initialCalDay?: number;
+  allTags: TagRow[];
+  initialTagIds?: string[];
 }
 
 function toSlug(title: string) {
@@ -44,7 +47,7 @@ const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "";
 
-export default function DevotionalForm({ devotional, initialCalMonth, initialCalDay }: DevotionalFormProps) {
+export default function DevotionalForm({ devotional, initialCalMonth, initialCalDay, allTags, initialTagIds = [] }: DevotionalFormProps) {
   const router = useRouter();
   const isNew = !devotional;
 
@@ -60,6 +63,7 @@ export default function DevotionalForm({ devotional, initialCalMonth, initialCal
   const [publishAt, setPublishAt] = useState(
     devotional?.publish_at ? format(new Date(devotional.publish_at), "yyyy-MM-dd'T'HH:mm") : ""
   );
+  const [tagIds, setTagIds] = useState<string[]>(initialTagIds);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [biblePickerOpen, setBiblePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -107,6 +111,7 @@ export default function DevotionalForm({ devotional, initialCalMonth, initialCal
         cal_day: calDay !== "" ? Number(calDay) : null,
         status,
         publish_at: status === "published" && publishAt ? new Date(publishAt).toISOString() : null,
+        tag_ids: tagIds,
       });
 
       if (!result.success) { toast.error(result.error); return; }
@@ -260,7 +265,7 @@ export default function DevotionalForm({ devotional, initialCalMonth, initialCal
 
           <div>
             <label className="block text-sm font-medium mb-1.5">Body</label>
-            <RichEditor value={bodyHtml} onChange={setBodyHtml} placeholder="Write your devotional…" />
+            <RichEditor value={bodyHtml} onChange={setBodyHtml} placeholder="Write your devotional…" uploadFolder="devotionals" />
           </div>
         </div>
 
@@ -311,6 +316,10 @@ export default function DevotionalForm({ devotional, initialCalMonth, initialCal
                 Assigned to {MONTHS[Number(calMonth) - 1]} {calDay}
               </p>
             )}
+          </div>
+
+          <div className="bg-white rounded-xl border border-border p-5">
+            <TagPicker allTags={allTags} value={tagIds} onChange={setTagIds} />
           </div>
 
           <div className="bg-white rounded-xl border border-border p-5 space-y-1.5">

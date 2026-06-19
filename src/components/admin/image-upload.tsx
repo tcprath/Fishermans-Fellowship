@@ -11,7 +11,7 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 5 * 1024 * 1024;
 
 interface ImageUploadProps {
-  folder: "posts" | "devotionals" | "events";
+  folder: "posts" | "devotionals" | "events" | "resources";
   value: string;
   onChange: (url: string) => void;
   label?: string;

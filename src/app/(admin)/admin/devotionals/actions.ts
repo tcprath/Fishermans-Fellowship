@@ -21,7 +21,20 @@ const schema = z.object({
   cal_day: z.number().int().min(1).max(31).nullable().optional(),
   status: z.enum(["draft", "published"]),
   publish_at: z.string().nullable().optional(),
+  tag_ids: z.array(z.string()).optional(),
 });
+
+async function syncDevotionalTags(
+  supabase: Awaited<ReturnType<typeof getAuthClient>>,
+  devotionalId: string,
+  tagIds: string[]
+) {
+  await supabase.from("devotional_tags").delete().eq("devotional_id", devotionalId);
+  if (tagIds.length === 0) return;
+  await supabase
+    .from("devotional_tags")
+    .insert(tagIds.map((tag_id) => ({ devotional_id: devotionalId, tag_id })));
+}
 
 async function getAuthClient() {
   const supabase = await createClient();
@@ -79,6 +92,8 @@ export async function upsertDevotional(
 
       if (error) return { success: false, error: error.message };
 
+      await syncDevotionalTags(supabase, data.id, data.tag_ids ?? []);
+
       revalidateDevotionalPaths(data.slug);
       return { success: true, id: data.id };
     } else {
@@ -101,6 +116,8 @@ export async function upsertDevotional(
         .single();
 
       if (error) return { success: false, error: error.message };
+
+      await syncDevotionalTags(supabase, created.id, data.tag_ids ?? []);
 
       revalidateDevotionalPaths(data.slug);
       return { success: true, id: created.id };

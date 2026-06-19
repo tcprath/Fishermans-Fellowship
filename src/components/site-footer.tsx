@@ -8,12 +8,12 @@ const LINKS = [
   { href: "/rise-up-gods-way",       label: "Rise Up God's Way" },
   { href: "/devotionals",            label: "Devotionals" },
   { href: "/events",                 label: "Events" },
+  { href: "/resources",              label: "Resources" },
   { href: "/contact",                label: "Contact" },
   { href: "/donate",                 label: "Donate" },
 ];
 
 const RSS = [
-  { href: "/rss.xml",                          label: "Combined feed" },
   { href: "/fishermans-fellowship/rss.xml",    label: "Fisherman's Fellowship" },
   { href: "/rise-up-gods-way/rss.xml",         label: "Rise Up God's Way" },
 ];
@@ -37,22 +37,25 @@ function FacebookIcon({ className }: { className?: string }) {
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-[var(--ff-blue)] text-[var(--ff-cream)] mt-auto">
+    <footer
+      className="text-[var(--ff-cream)] mt-auto"
+      style={{
+        background:
+          "linear-gradient(165deg, #243746 0%, #1F2F3D 60%, #1A2A38 100%)",
+      }}
+    >
       {/* Nav + RSS */}
       <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-14 grid grid-cols-1 sm:grid-cols-3 gap-12">
         {/* Brand */}
-        <div>
+        <div className="flex flex-col items-center sm:items-start text-center sm:text-left col-span-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logos/ff-wordmark.svg"
+            src="/logos/ff-white.svg"
             alt="Fisherman's Fellowship"
-            width={152}
-            height={34}
-            className="h-8 w-auto mb-5"
-            style={{ filter: "brightness(0) invert(1)" }}
+            className="h-14 w-auto mb-4"
           />
-          <p className="text-sm text-[var(--blue-300,#9FAEBA)] leading-relaxed mb-5">
-            Fishers of men.<br />Brothers on the water.
+          <p className="text-sm text-[var(--blue-300,#9FAEBA)] leading-relaxed mb-5 whitespace-nowrap">
+            Fishers of men. Brothers on the water.
           </p>
           {/* Social icons */}
           <div className="flex items-center gap-3">
@@ -61,33 +64,33 @@ export default function SiteFooter() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="w-8 h-8 rounded-full bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.2)] flex items-center justify-center transition-colors duration-200"
+              className="w-8 h-8 rounded-full bg-[rgba(189,154,95,0.14)] hover:bg-[rgba(189,154,95,0.28)] flex items-center justify-center transition-colors duration-200"
             >
-              <InstagramIcon className="h-4 w-4 text-[var(--ff-cream)]" />
+              <InstagramIcon className="h-4 w-4 text-[var(--ff-gold)]" />
             </a>
             <a
               href="https://www.facebook.com/fishermansfellowshipministries"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="w-8 h-8 rounded-full bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.2)] flex items-center justify-center transition-colors duration-200"
+              className="w-8 h-8 rounded-full bg-[rgba(189,154,95,0.14)] hover:bg-[rgba(189,154,95,0.28)] flex items-center justify-center transition-colors duration-200"
             >
-              <FacebookIcon className="h-4 w-4 text-[var(--ff-cream)]" />
+              <FacebookIcon className="h-4 w-4 text-[var(--ff-gold)]" />
             </a>
           </div>
         </div>
 
         {/* Pages — two columns */}
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--ff-gold)] mb-5">
+        <div className="text-left">
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--ff-gold)] mb-2">
             Pages
           </p>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-1">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="text-sm text-[var(--blue-300,#9FAEBA)] hover:text-[var(--ff-cream)] transition-colors duration-200"
+                  className="text-sm leading-tight text-[var(--blue-300,#9FAEBA)] hover:text-[var(--ff-cream)] transition-colors duration-200"
                 >
                   {l.label}
                 </Link>
@@ -97,16 +100,16 @@ export default function SiteFooter() {
         </div>
 
         {/* RSS */}
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--ff-gold)] mb-5">
+        <div className="text-left">
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--ff-gold)] mb-2">
             RSS Feeds
           </p>
-          <ul className="space-y-2.5">
+          <ul className="flex flex-wrap gap-x-5 gap-y-1 sm:flex-col sm:gap-1">
             {RSS.map((r) => (
               <li key={r.href}>
                 <Link
                   href={r.href}
-                  className="inline-flex items-center gap-1.5 text-sm text-[var(--blue-300,#9FAEBA)] hover:text-[var(--ff-cream)] transition-colors duration-200"
+                  className="inline-flex items-center gap-1.5 text-sm leading-tight text-[var(--blue-300,#9FAEBA)] hover:text-[var(--ff-cream)] transition-colors duration-200"
                 >
                   <Rss className="h-3.5 w-3.5 shrink-0" />
                   {r.label}
@@ -118,14 +121,28 @@ export default function SiteFooter() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[rgba(244,237,229,.08)] max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-[var(--blue-500,#5A6E7E)]">
+      <div className="border-t border-[rgba(244,237,229,.08)] max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-5 flex flex-col sm:flex-row items-center sm:justify-between gap-2 text-xs text-[var(--blue-500,#5A6E7E)] text-center sm:text-left">
         <p>© {year} Fisherman&apos;s Fellowship. All rights reserved.</p>
-        <Link
-          href="/admin/login"
-          className="hover:text-[var(--blue-300,#9FAEBA)] transition-colors duration-200"
-        >
-          Admin
-        </Link>
+        <div className="flex items-center gap-3">
+          <span>
+            Site design by{" "}
+            <a
+              href="https://www.andrewmindy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--blue-300,#9FAEBA)] hover:text-[var(--ff-gold)] transition-colors duration-200"
+            >
+              Andrew Mindy
+            </a>
+          </span>
+          <span className="w-px h-3 bg-[rgba(244,237,229,.18)]" aria-hidden />
+          <Link
+            href="/admin/login"
+            className="hover:text-[var(--blue-300,#9FAEBA)] transition-colors duration-200"
+          >
+            Admin
+          </Link>
+        </div>
       </div>
     </footer>
   );

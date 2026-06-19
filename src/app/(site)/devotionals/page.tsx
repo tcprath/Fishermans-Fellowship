@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, ArrowRight } from "lucide-react";
-import { getPublishedDevotionals } from "@/lib/content";
+import { getPublishedDevotionals, getTagsForDevotionals } from "@/lib/content";
 import DevotionalCard from "@/components/devotional-card";
+import TagFilterBar from "@/components/tag-filter-bar";
 import { Sparkle } from "@/components/ui/sparkle";
 
 export const revalidate = 60;
@@ -14,8 +15,16 @@ export const metadata: Metadata = {
     "Daily devotionals from Fisherman's Fellowship — a free word each morning to keep you in Scripture and growing.",
 };
 
-export default async function DevotionalsPage() {
-  const devotionals = await getPublishedDevotionals();
+export default async function DevotionalsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tag?: string; q?: string }>;
+}) {
+  const { tag, q } = await searchParams;
+  const [devotionals, allTags] = await Promise.all([
+    getPublishedDevotionals(tag, q),
+    getTagsForDevotionals(),
+  ]);
 
   return (
     <>
@@ -51,6 +60,14 @@ export default async function DevotionalsPage() {
 
       {/* ── Grid ──────────────────────────────────────────────────────────── */}
       <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-16">
+        {allTags.length > 0 && (
+          <TagFilterBar
+            tags={allTags}
+            activeSlug={tag}
+            basePath="/devotionals"
+            className="mb-10"
+          />
+        )}
         {devotionals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <div className="w-16 h-16 rounded-full bg-[var(--ff-blue)] flex items-center justify-center mb-6">

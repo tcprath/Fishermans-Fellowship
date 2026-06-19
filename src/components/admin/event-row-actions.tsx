@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { deleteEvent } from "@/app/(admin)/admin/events/actions";
 import type { EventRow } from "@/lib/supabase/types";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 export default function EventRowActions({ event }: { event: EventRow }) {
   const router = useRouter();
@@ -52,6 +52,10 @@ export default function EventRowActions({ event }: { event: EventRow }) {
           <DropdownMenuItem onClick={() => router.push(`/admin/events/${event.id}`)}>
             <Pencil className="size-3.5" />
             Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => window.open("/events", "_blank", "noopener,noreferrer")}>
+            <ExternalLink className="size-3.5" />
+            View on site
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

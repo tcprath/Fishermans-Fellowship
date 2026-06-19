@@ -2,10 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
-import type { PostRow } from "@/lib/supabase/types";
+import type { PostRow, TagRow } from "@/lib/supabase/types";
+import TagChips from "@/components/tag-chips";
 
 type Props = {
-  post: PostRow;
+  post: PostRow & { tags?: TagRow[] };
   blogSlug: string;
 };
 
@@ -41,6 +42,9 @@ export default function PostCard({ post, blogSlug }: Props) {
           <p className="text-sm text-[var(--ink-soft,#3E4E5A)] leading-relaxed line-clamp-3 mb-4 flex-1">
             {post.excerpt}
           </p>
+        )}
+        {post.tags && post.tags.length > 0 && (
+          <TagChips tags={post.tags} basePath={`/${blogSlug}`} className="mb-3" />
         )}
         <div className="flex items-center justify-between mt-auto pt-2">
           {post.author && (

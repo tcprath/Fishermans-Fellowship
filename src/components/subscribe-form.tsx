@@ -43,8 +43,8 @@ export default function SubscribeForm({ compact, dark }: Props) {
         aria-invalid={!!errors.email}
         {...register("email")}
         className={dark
-          ? "rounded-[11px] border-[rgba(255,255,255,0.25)] bg-[rgba(255,255,255,0.15)] text-white placeholder:text-[rgba(255,255,255,0.5)] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
-          : "rounded-[11px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
+          ? "w-full h-12 py-3 px-4 text-[15px] rounded-[12px] border-[rgba(255,255,255,0.25)] bg-[rgba(255,255,255,0.15)] text-white placeholder:text-[rgba(255,255,255,0.5)] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
+          : "w-full h-12 py-3 px-4 text-[15px] rounded-[12px] border-[rgba(36,55,70,.14)] bg-[#FBF8F2] focus-visible:border-[var(--ff-gold)] focus-visible:ring-0 transition-colors"
         }
       />
       {errors.email && (

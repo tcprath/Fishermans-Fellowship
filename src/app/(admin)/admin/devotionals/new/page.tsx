@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import DevotionalForm from "@/components/admin/devotional-form";
+import { listTags } from "@/app/(admin)/admin/tags/actions";
 
 export const metadata: Metadata = { title: "New Devotional" };
 
@@ -11,5 +12,12 @@ export default async function NewDevotionalPage({
   const sp = await searchParams;
   const calMonth = sp.cal_month ? parseInt(sp.cal_month, 10) : undefined;
   const calDay = sp.cal_day ? parseInt(sp.cal_day, 10) : undefined;
-  return <DevotionalForm initialCalMonth={calMonth} initialCalDay={calDay} />;
+  const allTags = await listTags();
+  return (
+    <DevotionalForm
+      initialCalMonth={calMonth}
+      initialCalDay={calDay}
+      allTags={allTags}
+    />
+  );
 }

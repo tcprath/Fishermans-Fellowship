@@ -23,14 +23,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import RichEditor from "@/components/admin/rich-editor";
 import ImageUpload from "@/components/admin/image-upload";
+import TagPicker from "@/components/admin/tag-picker";
 import { upsertPost, deletePost } from "@/app/(admin)/admin/posts/actions";
-import type { PostRow, BlogRow } from "@/lib/supabase/types";
+import type { PostRow, BlogRow, TagRow } from "@/lib/supabase/types";
 import { ExternalLink, Trash2, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
 interface PostFormProps {
   blogs: BlogRow[];
   post?: PostRow & { blog?: BlogRow };
+  allTags: TagRow[];
+  initialTagIds?: string[];
 }
 
 function toSlug(title: string) {
@@ -52,7 +55,7 @@ function defaultAuthorForBlog(blogs: BlogRow[], blogId: string): string {
   return BLOG_DEFAULT_AUTHORS[slug] ?? "";
 }
 
-export default function PostForm({ blogs, post }: PostFormProps) {
+export default function PostForm({ blogs, post, allTags, initialTagIds = [] }: PostFormProps) {
   const router = useRouter();
   const isNew = !post;
 
@@ -73,6 +76,7 @@ export default function PostForm({ blogs, post }: PostFormProps) {
   const [publishAt, setPublishAt] = useState(
     post?.publish_at ? format(new Date(post.publish_at), "yyyy-MM-dd'T'HH:mm") : ""
   );
+  const [tagIds, setTagIds] = useState<string[]>(initialTagIds);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -108,6 +112,7 @@ export default function PostForm({ blogs, post }: PostFormProps) {
         author: author || undefined,
         status,
         publish_at: status === "published" && publishAt ? new Date(publishAt).toISOString() : null,
+        tag_ids: tagIds,
       });
 
       if (!result.success) {
@@ -276,7 +281,7 @@ export default function PostForm({ blogs, post }: PostFormProps) {
 
           <div>
             <label className="block text-sm font-medium mb-1.5">Body</label>
-            <RichEditor value={bodyHtml} onChange={setBodyHtml} placeholder="Write your post…" />
+            <RichEditor value={bodyHtml} onChange={setBodyHtml} placeholder="Write your post…" uploadFolder="posts" />
           </div>
         </div>
 
@@ -347,6 +352,10 @@ export default function PostForm({ blogs, post }: PostFormProps) {
               onChange={setHeroImageUrl}
               label="Hero image"
             />
+          </div>
+
+          <div className="bg-white rounded-xl border border-border p-5">
+            <TagPicker allTags={allTags} value={tagIds} onChange={setTagIds} />
           </div>
         </div>
       </div>

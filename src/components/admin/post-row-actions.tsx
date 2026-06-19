@@ -22,7 +22,7 @@ import {
 
 import { upsertPost, deletePost } from "@/app/(admin)/admin/posts/actions";
 import type { PostRow, BlogRow } from "@/lib/supabase/types";
-import { MoreHorizontal, Pencil, Eye, EyeOff, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Eye, EyeOff, Trash2, ExternalLink } from "lucide-react";
 
 export default function PostRowActions({
   post,
@@ -79,6 +79,20 @@ export default function PostRowActions({
             <Pencil className="size-3.5" />
             Edit
           </DropdownMenuItem>
+          {post.status === "published" && post.blogs?.slug && (
+            <DropdownMenuItem
+              onClick={() =>
+                window.open(
+                  `/${post.blogs!.slug}/${post.slug}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+            >
+              <ExternalLink className="size-3.5" />
+              View on site
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={handleTogglePublish}>
             {post.status === "published" ? (
               <>

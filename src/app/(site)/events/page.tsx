@@ -17,7 +17,7 @@ export default async function EventsPage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden text-[var(--ff-cream)] pt-24 pb-20">
+      <section className="relative overflow-hidden text-[var(--ff-cream)] pt-20 pb-14 sm:pt-24 sm:pb-20">
         <Image
           src="/photos/section-dock.jpg"
           alt="Fishermen gathered on a dock"
@@ -40,7 +40,7 @@ export default async function EventsPage() {
           >
             Upcoming Events
           </h1>
-          <p className="text-[var(--blue-300,#9FAEBA)] mt-4 text-lg leading-relaxed max-w-lg">
+          <p className="text-[var(--blue-300,#9FAEBA)] mt-4 text-base sm:text-lg leading-relaxed max-w-lg">
             Tournaments, retreats, and fellowship gatherings — find us wherever the water
             takes you.
           </p>
@@ -48,8 +48,8 @@ export default async function EventsPage() {
       </section>
 
       {/* ── Calendar ───────────────────────────────────────────────────────── */}
-      <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-5 py-14">
-        <div className="bg-white rounded-[20px] border border-[var(--line)] shadow-card p-6 sm:p-8">
+      <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-3 sm:px-5 py-8 sm:py-14">
+        <div className="bg-white rounded-[20px] border border-[var(--line)] shadow-card p-3 sm:p-6 lg:p-8">
           <EventsCalendar events={events} />
         </div>
       </div>

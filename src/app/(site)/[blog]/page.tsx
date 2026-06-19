@@ -10,12 +10,15 @@ import {
   getBlogBySlug,
   getPublishedPostsByBlog,
   getPublishedDevotionals,
+  getTagsForPostsInBlog,
+  getTagsForDevotionals,
 } from "@/lib/content";
+import TagFilterBar from "@/components/tag-filter-bar";
 
 export const revalidate = 60;
 
 type Params = { blog: string };
-type SearchParams = { type?: string };
+type SearchParams = { type?: string; tag?: string; q?: string };
 
 export async function generateMetadata({
   params,
@@ -40,7 +43,7 @@ export default async function BlogFeedPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { blog: slug } = await params;
-  const { type = "all" } = await searchParams;
+  const { type = "all", tag, q } = await searchParams;
 
   const blog = await getBlogBySlug(slug);
   if (!blog) notFound();
@@ -48,10 +51,19 @@ export default async function BlogFeedPage({
   const isFF = slug === "fishermans-fellowship";
   const isRU = slug === "rise-up-gods-way";
 
-  const [posts, devotionals] = await Promise.all([
-    getPublishedPostsByBlog(blog.id),
-    isFF ? getPublishedDevotionals() : Promise.resolve([]),
+  const [posts, devotionals, postTagsForBlog, devTags] = await Promise.all([
+    getPublishedPostsByBlog(blog.id, tag, q),
+    isFF ? getPublishedDevotionals(tag, q) : Promise.resolve([]),
+    getTagsForPostsInBlog(blog.id),
+    isFF ? getTagsForDevotionals() : Promise.resolve([]),
   ]);
+
+  const availableTags = (() => {
+    const map = new Map<string, (typeof postTagsForBlog)[number]>();
+    for (const t of postTagsForBlog) map.set(t.id, t);
+    if (isFF) for (const t of devTags) map.set(t.id, t);
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  })();
 
   type FeedItem =
     | { kind: "post"; data: (typeof posts)[number] }
@@ -157,25 +169,42 @@ export default async function BlogFeedPage({
         )}
         {/* Filter tabs (FF only) */}
         {isFF && (
-          <div className="flex gap-1.5 mb-12 bg-[var(--cream-200)] rounded-full p-1.5 w-fit" data-reveal>
+          <div className="flex gap-1.5 mb-6 bg-[var(--cream-200)] rounded-full p-1.5 w-fit" data-reveal>
             {[
               { value: "all", label: "All" },
               { value: "posts", label: "Posts" },
               { value: "devotionals", label: "Devotionals" },
-            ].map((tab) => (
-              <Link
-                key={tab.value}
-                href={tab.value === "all" ? `/${slug}` : `/${slug}?type=${tab.value}`}
-                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                  type === tab.value || (tab.value === "all" && type === "all")
-                    ? "bg-white text-[var(--ff-blue)] shadow-sm"
-                    : "text-[var(--ink-soft,#3E4E5A)] hover:text-[var(--ff-blue)]"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            ))}
+            ].map((tabOpt) => {
+              const qs = new URLSearchParams();
+              if (tabOpt.value !== "all") qs.set("type", tabOpt.value);
+              if (tag) qs.set("tag", tag);
+              const href = qs.toString() ? `/${slug}?${qs}` : `/${slug}`;
+              const active = type === tabOpt.value || (tabOpt.value === "all" && type === "all");
+              return (
+                <Link
+                  key={tabOpt.value}
+                  href={href}
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? "bg-white text-[var(--ff-blue)] shadow-sm"
+                      : "text-[var(--ink-soft,#3E4E5A)] hover:text-[var(--ff-blue)]"
+                  }`}
+                >
+                  {tabOpt.label}
+                </Link>
+              );
+            })}
           </div>
+        )}
+
+        {availableTags.length > 0 && (
+          <TagFilterBar
+            tags={availableTags}
+            activeSlug={tag}
+            basePath={`/${slug}`}
+            extraParams={isFF && type !== "all" ? { type } : undefined}
+            className="mb-10"
+          />
         )}
 
         {feed.length === 0 ? (

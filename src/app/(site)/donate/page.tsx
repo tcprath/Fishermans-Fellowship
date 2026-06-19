@@ -312,8 +312,21 @@ export default function DonatePage() {
       </section>
 
       {/* ── Closing CTA ───────────────────────────────────────────────────── */}
-      <section className="bg-[var(--ff-blue)] py-24">
-        <div className="max-w-[var(--max-w-content,1140px)] mx-auto px-5 text-center">
+      <section className="relative overflow-hidden py-24">
+        <Image
+          src="/photos/fellowship-pic.jpg"
+          alt="Lake at sunset"
+          fill
+          className="object-cover object-center"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(15,28,42,0.88) 0%, rgba(20,38,56,0.92) 50%, rgba(15,28,42,0.95) 100%)",
+          }}
+        />
+        <div className="relative z-10 max-w-[var(--max-w-content,1140px)] mx-auto px-5 text-center">
           <p className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--ff-gold)] mb-2">
             <Sparkle size={10} className="text-[var(--ff-gold)]" />
             Thank You

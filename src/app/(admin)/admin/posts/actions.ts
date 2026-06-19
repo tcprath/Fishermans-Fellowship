@@ -20,8 +20,21 @@ const schema = z.object({
   author: z.string().optional(),
   status: z.enum(["draft", "published"]),
   publish_at: z.string().nullable().optional(),
+  tag_ids: z.array(z.string()).optional(),
   blog_slug: z.string().optional(), // for revalidation
 });
+
+async function syncPostTags(
+  supabase: Awaited<ReturnType<typeof getAuthClient>>,
+  postId: string,
+  tagIds: string[]
+) {
+  await supabase.from("post_tags").delete().eq("post_id", postId);
+  if (tagIds.length === 0) return;
+  await supabase
+    .from("post_tags")
+    .insert(tagIds.map((tag_id) => ({ post_id: postId, tag_id })));
+}
 
 async function getAuthClient() {
   const supabase = await createClient();
@@ -84,6 +97,8 @@ export async function upsertPost(
 
       if (error) return { success: false, error: error.message };
 
+      await syncPostTags(supabase, data.id, data.tag_ids ?? []);
+
       revalidatePostPaths(data.blog_slug);
       revalidatePath(`/${data.blog_slug}/${data.slug}`);
       return { success: true, id: data.id };
@@ -107,6 +122,8 @@ export async function upsertPost(
         .single();
 
       if (error) return { success: false, error: error.message };
+
+      await syncPostTags(supabase, created.id, data.tag_ids ?? []);
 
       revalidatePostPaths(data.blog_slug);
       return { success: true, id: created.id };
