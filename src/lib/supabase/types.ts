@@ -17,6 +17,7 @@ export type PostRow = {
   author: string | null;
   status: "draft" | "published";
   published_at: string | null;
+  publish_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -28,9 +29,12 @@ export type DevotionalRow = {
   scripture: string | null;
   excerpt: string | null;
   body_html: string | null;
-  image_url: string;
+  image_url: string | null;
+  cal_month: number | null;
+  cal_day: number | null;
   status: "draft" | "published";
   published_at: string | null;
+  publish_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -40,6 +44,8 @@ export type EventRow = {
   title: string;
   description: string | null;
   location: string | null;
+  facebook_event_url: string | null;
+  image_url: string | null;
   starts_at: string;
   ends_at: string;
   all_day: boolean;

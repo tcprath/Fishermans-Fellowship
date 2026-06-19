@@ -17,7 +17,10 @@ const schema = z.object({
   excerpt: z.string().optional(),
   body_html: z.string().optional(),
   image_url: z.string().optional(),
+  cal_month: z.number().int().min(1).max(12).nullable().optional(),
+  cal_day: z.number().int().min(1).max(31).nullable().optional(),
   status: z.enum(["draft", "published"]),
+  publish_at: z.string().nullable().optional(),
 });
 
 async function getAuthClient() {
@@ -43,10 +46,6 @@ export async function upsertDevotional(
     const supabase = await getAuthClient();
     const data = schema.parse(input);
 
-    if (data.status === "published" && !data.image_url) {
-      return { success: false, error: "Image is required to publish a devotional" };
-    }
-
     const body_html = data.body_html ? sanitize(data.body_html) : "";
 
     if (data.id) {
@@ -69,9 +68,12 @@ export async function upsertDevotional(
           scripture: data.scripture ?? null,
           excerpt: data.excerpt ?? null,
           body_html,
-          image_url: data.image_url ?? "",
+          image_url: data.image_url ?? null,
+          cal_month: data.cal_month ?? null,
+          cal_day: data.cal_day ?? null,
           status: data.status,
           published_at,
+          publish_at: data.publish_at ?? null,
         })
         .eq("id", data.id);
 
@@ -88,9 +90,12 @@ export async function upsertDevotional(
           scripture: data.scripture ?? null,
           excerpt: data.excerpt ?? null,
           body_html,
-          image_url: data.image_url ?? "",
+          image_url: data.image_url ?? null,
+          cal_month: data.cal_month ?? null,
+          cal_day: data.cal_day ?? null,
           status: data.status,
           published_at: data.status === "published" ? new Date().toISOString() : null,
+          publish_at: data.publish_at ?? null,
         })
         .select("id")
         .single();

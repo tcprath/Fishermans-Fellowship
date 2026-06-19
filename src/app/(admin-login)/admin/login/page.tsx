@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Fish } from "lucide-react";
+import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -86,11 +86,15 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#F4EDE5] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
-          <div className="size-14 rounded-full bg-[#243746] flex items-center justify-center mb-4 shadow-lg">
-            <Fish className="size-7 text-[#BD9A5F]" />
-          </div>
-          <h1 className="text-xl font-semibold text-[#243746]">Ministry Admin</h1>
-          <p className="text-sm text-muted-foreground mt-1">Sign in to manage content</p>
+          <Image
+            src="/logos/ff-wordmark.svg"
+            alt="Fisherman's Fellowship"
+            width={551}
+            height={95}
+            className="w-56 mb-4"
+            priority
+          />
+          <p className="text-sm text-muted-foreground">Sign in to manage content</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-border p-6">

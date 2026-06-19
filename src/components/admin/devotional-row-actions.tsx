@@ -42,7 +42,7 @@ export default function DevotionalRowActions({ devotional }: { devotional: Devot
         scripture: devotional.scripture ?? undefined,
         excerpt: devotional.excerpt ?? undefined,
         body_html: devotional.body_html ?? undefined,
-        image_url: devotional.image_url,
+        image_url: devotional.image_url ?? undefined,
         status: newStatus,
       });
       if (!result.success) { toast.error(result.error); return; }

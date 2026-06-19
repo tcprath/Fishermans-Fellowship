@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DevotionalRowActions from "@/components/admin/devotional-row-actions";
-import { Plus } from "lucide-react";
+import { Plus, CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import type { DevotionalRow } from "@/lib/supabase/types";
 
@@ -41,10 +41,16 @@ export default async function DevotionalsPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Devotionals</h1>
-        <Link href="/admin/devotionals/new" className={buttonVariants({ size: "sm" })}>
-          <Plus className="size-4" />
-          New devotional
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/devotionals/calendar" className={buttonVariants({ size: "sm", variant: "outline" })}>
+            <CalendarDays className="size-4" />
+            Year view
+          </Link>
+          <Link href="/admin/devotionals/new" className={buttonVariants({ size: "sm" })}>
+            <Plus className="size-4" />
+            New devotional
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-2">
@@ -59,6 +65,7 @@ export default async function DevotionalsPage({
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead>Scripture</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Updated</TableHead>
@@ -76,13 +83,22 @@ export default async function DevotionalsPage({
                       {d.title || <span className="text-muted-foreground italic">Untitled</span>}
                     </Link>
                   </TableCell>
+                  <TableCell className="text-sm text-muted-foreground tabular-nums">
+                    {d.cal_month && d.cal_day
+                      ? `${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.cal_month - 1]} ${d.cal_day}`
+                      : "—"}
+                  </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {d.scripture ?? "—"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={d.status === "published" ? "default" : "secondary"}>
-                      {d.status}
-                    </Badge>
+                    {d.status === "published" && d.publish_at && new Date(d.publish_at) > new Date() ? (
+                      <Badge variant="outline">Scheduled</Badge>
+                    ) : (
+                      <Badge variant={d.status === "published" ? "default" : "secondary"}>
+                        {d.status}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(d.updated_at), "MMM d, yyyy")}

@@ -99,9 +99,13 @@ export default async function PostsPage({
                     {post.blogs?.name ?? "—"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={post.status === "published" ? "default" : "secondary"}>
-                      {post.status}
-                    </Badge>
+                    {post.status === "published" && post.publish_at && new Date(post.publish_at) > new Date() ? (
+                      <Badge variant="outline">Scheduled</Badge>
+                    ) : (
+                      <Badge variant={post.status === "published" ? "default" : "secondary"}>
+                        {post.status}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(post.updated_at), "MMM d, yyyy")}

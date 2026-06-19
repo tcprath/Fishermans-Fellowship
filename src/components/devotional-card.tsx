@@ -19,7 +19,7 @@ export default function DevotionalCard({ devotional }: Props) {
       <Link href={href} tabIndex={-1} aria-hidden>
         <div className="relative aspect-[4/3] bg-[var(--cream-200)] overflow-hidden">
           <Image
-            src={devotional.image_url}
+            src={devotional.image_url || "/devotional-default.jpg"}
             alt={devotional.title}
             fill
             className="object-cover transition-transform duration-500 ease-[cubic-bezier(.32,.72,0,1)] group-hover:scale-[1.03]"

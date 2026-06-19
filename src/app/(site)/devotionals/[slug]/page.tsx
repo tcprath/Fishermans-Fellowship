@@ -26,7 +26,7 @@ export async function generateMetadata({
     openGraph: {
       title: devotional.title,
       description: devotional.excerpt ?? undefined,
-      images: [{ url: devotional.image_url, alt: devotional.title }],
+      images: [{ url: devotional.image_url ?? `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/devotional-default.jpg`, alt: devotional.title }],
       url,
     },
   };
@@ -52,7 +52,7 @@ export default async function DevotionalPage({
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div className="relative h-80 sm:h-[30rem] overflow-hidden bg-[var(--ff-blue)]">
         <Image
-          src={devotional.image_url}
+          src={devotional.image_url || "/devotional-default.jpg"}
           alt={devotional.title}
           fill
           className="object-cover"

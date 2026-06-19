@@ -3,9 +3,12 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, BookOpen, Calendar, Plus, ArrowRight } from "lucide-react";
+import { FileText, BookOpen, Calendar, Plus, ArrowRight, CalendarDays } from "lucide-react";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import type { PostRow, DevotionalRow, EventRow, BlogRow } from "@/lib/supabase/types";
+
+const TZ = process.env.NEXT_PUBLIC_SITE_TZ ?? "America/New_York";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -13,6 +16,10 @@ export const revalidate = 0;
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
+
+  const now = toZonedTime(new Date(), TZ);
+  const todayMonth = now.getMonth() + 1;
+  const todayDay = now.getDate();
 
   const [
     { count: totalPosts },
@@ -23,6 +30,7 @@ export default async function AdminDashboard() {
     { data: recentPosts },
     { data: recentDevotionals },
     { data: nextEvents },
+    { data: todayDevotionalRows },
   ] = await Promise.all([
     supabase.from("posts").select("*", { count: "exact", head: true }),
     supabase.from("posts").select("*", { count: "exact", head: true }).eq("status", "published"),
@@ -32,7 +40,10 @@ export default async function AdminDashboard() {
     supabase.from("posts").select("*, blogs(name)").order("updated_at", { ascending: false }).limit(5),
     supabase.from("devotionals").select("*").order("updated_at", { ascending: false }).limit(5),
     supabase.from("events").select("*").gte("starts_at", new Date().toISOString()).eq("status", "published").order("starts_at", { ascending: true }).limit(3),
+    supabase.from("devotionals").select("id, title, scripture, status, slug").eq("cal_month", todayMonth).eq("cal_day", todayDay).limit(1),
   ]);
+
+  const todayDevotional = todayDevotionalRows?.[0] ?? null;
 
   return (
     <div className="space-y-8">
@@ -77,6 +88,51 @@ export default async function AdminDashboard() {
           <Plus className="size-4" />
           New event
         </Link>
+      </div>
+
+      {/* Today's devotional */}
+      <div className="bg-white rounded-xl border border-border p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-sm flex items-center gap-2">
+            <CalendarDays className="size-4 text-primary" />
+            Today&apos;s Devotional
+            <span className="text-xs font-normal text-muted-foreground">
+              ({["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][todayMonth - 1]} {todayDay})
+            </span>
+          </h2>
+          <Link href="/admin/devotionals/calendar" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+            Year view <ArrowRight className="size-3" />
+          </Link>
+        </div>
+        {todayDevotional ? (
+          <Link
+            href={`/admin/devotionals/${todayDevotional.id}`}
+            className="flex items-start justify-between gap-3 group"
+          >
+            <div className="min-w-0">
+              <p className="text-sm font-medium group-hover:text-primary transition-colors truncate">
+                {todayDevotional.title}
+              </p>
+              {todayDevotional.scripture && (
+                <p className="text-xs text-muted-foreground mt-0.5 italic">{todayDevotional.scripture}</p>
+              )}
+            </div>
+            <Badge variant={todayDevotional.status === "published" ? "default" : "secondary"} className="shrink-0 text-xs">
+              {todayDevotional.status}
+            </Badge>
+          </Link>
+        ) : (
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">No devotional assigned for today.</p>
+            <Link
+              href={`/admin/devotionals/new?cal_month=${todayMonth}&cal_day=${todayDay}`}
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+            >
+              <Plus className="size-4" />
+              Create one
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

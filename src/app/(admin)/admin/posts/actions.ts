@@ -19,6 +19,7 @@ const schema = z.object({
   hero_image_url: z.string().optional(),
   author: z.string().optional(),
   status: z.enum(["draft", "published"]),
+  publish_at: z.string().nullable().optional(),
   blog_slug: z.string().optional(), // for revalidation
 });
 
@@ -77,6 +78,7 @@ export async function upsertPost(
           author: data.author ?? null,
           status: data.status,
           published_at,
+          publish_at: data.publish_at ?? null,
         })
         .eq("id", data.id);
 
@@ -99,6 +101,7 @@ export async function upsertPost(
           author: data.author ?? null,
           status: data.status,
           published_at: data.status === "published" ? new Date().toISOString() : null,
+          publish_at: data.publish_at ?? null,
         })
         .select("id")
         .single();

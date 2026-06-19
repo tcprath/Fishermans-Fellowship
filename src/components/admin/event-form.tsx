@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { upsertEvent, deleteEvent } from "@/app/(admin)/admin/events/actions";
 import type { EventRow } from "@/lib/supabase/types";
+import ImageUpload from "@/components/admin/image-upload";
 import { Trash2 } from "lucide-react";
 
 interface EventFormProps {
@@ -39,6 +40,8 @@ export default function EventForm({ event }: EventFormProps) {
   const [title, setTitle] = useState(event?.title ?? "");
   const [description, setDescription] = useState(event?.description ?? "");
   const [location, setLocation] = useState(event?.location ?? "");
+  const [facebookEventUrl, setFacebookEventUrl] = useState(event?.facebook_event_url ?? "");
+  const [imageUrl, setImageUrl] = useState(event?.image_url ?? "");
   const [allDay, setAllDay] = useState(event?.all_day ?? false);
   const [startsAt, setStartsAt] = useState(
     event ? utcToInputValue(event.starts_at, event.all_day) : ""
@@ -78,6 +81,8 @@ export default function EventForm({ event }: EventFormProps) {
         title,
         description: description || undefined,
         location: location || undefined,
+        facebook_event_url: facebookEventUrl || undefined,
+        image_url: imageUrl || undefined,
         starts_at: startsAt,
         ends_at: endsAt,
         all_day: allDay,
@@ -191,10 +196,28 @@ export default function EventForm({ event }: EventFormProps) {
             <label className="block text-sm font-medium mb-1.5">Location</label>
             <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Venue or address" />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Facebook Event URL</label>
+            <Input
+              type="url"
+              value={facebookEventUrl}
+              onChange={(e) => setFacebookEventUrl(e.target.value)}
+              placeholder="https://www.facebook.com/events/..."
+            />
+            <p className="text-xs text-muted-foreground mt-1">Optional — displayed as a link on the event page.</p>
+          </div>
         </div>
 
-        {/* Sidebar — date/time */}
+        {/* Sidebar — image + date/time */}
         <div className="space-y-6">
+          <ImageUpload
+            folder="events"
+            value={imageUrl}
+            onChange={setImageUrl}
+            label="Event Image"
+          />
+
           <div className="bg-white rounded-xl border border-border p-5 space-y-4">
             <div className="flex items-center gap-2">
               <input

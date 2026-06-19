@@ -25,7 +25,8 @@ import RichEditor from "@/components/admin/rich-editor";
 import ImageUpload from "@/components/admin/image-upload";
 import { upsertPost, deletePost } from "@/app/(admin)/admin/posts/actions";
 import type { PostRow, BlogRow } from "@/lib/supabase/types";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Trash2, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 interface PostFormProps {
   blogs: BlogRow[];
@@ -41,20 +42,41 @@ function toSlug(title: string) {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "";
 
+const BLOG_DEFAULT_AUTHORS: Record<string, string> = {
+  "fishermans-fellowship": "Cody Prather",
+  "rise-up-gods-way": "Sara Prather",
+};
+
+function defaultAuthorForBlog(blogs: BlogRow[], blogId: string): string {
+  const slug = blogs.find((b) => b.id === blogId)?.slug ?? "";
+  return BLOG_DEFAULT_AUTHORS[slug] ?? "";
+}
+
 export default function PostForm({ blogs, post }: PostFormProps) {
   const router = useRouter();
   const isNew = !post;
 
-  const [blogId, setBlogId] = useState(post?.blog_id ?? blogs[0]?.id ?? "");
+  const defaultBlogId = post?.blog_id
+    ?? blogs.find((b) => b.slug === "fishermans-fellowship")?.id
+    ?? blogs[0]?.id
+    ?? "";
+  const [blogId, setBlogId] = useState(defaultBlogId);
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
   const [slugManual, setSlugManual] = useState(!isNew);
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [heroImageUrl, setHeroImageUrl] = useState(post?.hero_image_url ?? "");
-  const [author, setAuthor] = useState(post?.author ?? "");
+  const [author, setAuthor] = useState(
+    post?.author ?? defaultAuthorForBlog(blogs, defaultBlogId)
+  );
   const [bodyHtml, setBodyHtml] = useState(post?.body_html ?? "");
+  const [publishAt, setPublishAt] = useState(
+    post?.publish_at ? format(new Date(post.publish_at), "yyyy-MM-dd'T'HH:mm") : ""
+  );
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const isScheduledFuture = Boolean(publishAt && new Date(publishAt) > new Date());
 
   // Auto-generate slug from title when not manually set
   useEffect(() => {
@@ -85,6 +107,7 @@ export default function PostForm({ blogs, post }: PostFormProps) {
         hero_image_url: heroImageUrl || undefined,
         author: author || undefined,
         status,
+        publish_at: status === "published" && publishAt ? new Date(publishAt).toISOString() : null,
       });
 
       if (!result.success) {
@@ -119,9 +142,13 @@ export default function PostForm({ blogs, post }: PostFormProps) {
           </h1>
           {!isNew && (
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant={isPublished ? "default" : "secondary"}>
-                {isPublished ? "Published" : "Draft"}
-              </Badge>
+              {post?.publish_at && new Date(post.publish_at) > new Date() ? (
+                <Badge variant="outline">Scheduled</Badge>
+              ) : (
+                <Badge variant={isPublished ? "default" : "secondary"}>
+                  {isPublished ? "Published" : "Draft"}
+                </Badge>
+              )}
               {isPublished && selectedBlog && (
                 <a
                   href={`${SITE_URL}/${selectedBlog.slug}/${post.slug}`}
@@ -162,7 +189,7 @@ export default function PostForm({ blogs, post }: PostFormProps) {
               disabled={isPending}
               onClick={() => handleSave("published")}
             >
-              Publish
+              {isScheduledFuture ? <><Calendar className="size-3.5" />Schedule</> : "Publish"}
             </Button>
           )}
           {isPublished && (
@@ -258,9 +285,17 @@ export default function PostForm({ blogs, post }: PostFormProps) {
           <div className="bg-white rounded-xl border border-border p-5 space-y-5">
             <div>
               <label className="block text-sm font-medium mb-1.5">Blog</label>
-              <Select value={blogId} onValueChange={(v) => { if (v) setBlogId(v); }}>
+              <Select value={blogId} onValueChange={(v) => {
+                if (!v) return;
+                setBlogId(v);
+                // Auto-swap author when it's still a default (not user-edited)
+                const isDefault = Object.values(BLOG_DEFAULT_AUTHORS).includes(author) || author === "";
+                if (isDefault) setAuthor(defaultAuthorForBlog(blogs, v));
+              }}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select blog" />
+                  <SelectValue placeholder="Select blog">
+                    {selectedBlog?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {blogs.map((b) => (
@@ -279,6 +314,29 @@ export default function PostForm({ blogs, post }: PostFormProps) {
                 onChange={(e) => setAuthor(e.target.value)}
                 placeholder="Author name"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
+                <Calendar className="size-3.5 text-muted-foreground" />
+                Schedule publish
+              </label>
+              <input
+                type="datetime-local"
+                value={publishAt}
+                onChange={(e) => setPublishAt(e.target.value)}
+                className="h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              />
+              {publishAt && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {isScheduledFuture
+                    ? `Publishes ${format(new Date(publishAt), "MMM d, yyyy 'at' h:mm a")}`
+                    : "Date is in the past — will publish immediately"}
+                </p>
+              )}
+              {!publishAt && (
+                <p className="text-xs text-muted-foreground mt-1">Leave empty to publish immediately</p>
+              )}
             </div>
           </div>
 

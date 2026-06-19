@@ -1,14 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getPublishedDevotionals } from "@/lib/content";
+import { getPublishedDevotionalStubs, getDevotionalBySlug } from "@/lib/content";
 import { pickOfTheDay } from "@/lib/devotional-of-the-day";
 import ShareButtons from "@/components/share-buttons";
 import { Sparkle } from "@/components/ui/sparkle";
 
+const DEFAULT_IMAGE = "/devotional-default.jpg";
+
 export default async function DevotionalOfTheDay() {
-  const catalog = await getPublishedDevotionals();
-  const devotional = pickOfTheDay(catalog);
+  const stubs = await getPublishedDevotionalStubs();
+  const stub = pickOfTheDay(stubs);
+
+  if (!stub) {
+    return (
+      <div className="rounded-card bg-(--cream-200) p-10 text-center text-(--muted-text,#6E7882) text-sm">
+        No devotionals published yet — check back soon.
+      </div>
+    );
+  }
+
+  const devotional = await getDevotionalBySlug(stub.slug);
 
   if (!devotional) {
     return (
@@ -19,13 +31,14 @@ export default async function DevotionalOfTheDay() {
   }
 
   const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/devotionals/${devotional.slug}`;
+  const imageSrc = devotional.image_url || DEFAULT_IMAGE;
 
   return (
     <div className="rounded-card overflow-hidden bg-(--ff-blue) text-(--ff-cream) grid md:grid-cols-2 shadow-card-hover">
       {/* Image */}
       <div className="relative aspect-4/3 md:aspect-auto min-h-64">
         <Image
-          src={devotional.image_url}
+          src={imageSrc}
           alt={devotional.title}
           fill
           className="object-cover"

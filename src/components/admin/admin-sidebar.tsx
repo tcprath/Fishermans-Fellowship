@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/app/(admin)/admin/auth-actions";
 import {
@@ -8,7 +9,6 @@ import {
   FileText,
   BookOpen,
   Calendar,
-  Fish,
   LogOut,
 } from "lucide-react";
 
@@ -26,10 +26,14 @@ export default function AdminSidebar({ email }: { email: string }) {
     <aside className="w-60 shrink-0 bg-[#243746] text-white flex flex-col">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <Fish className="size-5 text-[#BD9A5F] shrink-0" />
-          <span className="font-semibold text-sm leading-tight">Ministry Admin</span>
-        </div>
+        <Image
+          src="/logos/ff-wordmark-white.svg"
+          alt="Fisherman's Fellowship"
+          width={551}
+          height={95}
+          className="w-40"
+          priority
+        />
       </div>
 
       {/* Nav */}
